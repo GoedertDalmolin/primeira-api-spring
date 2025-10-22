@@ -19,19 +19,18 @@ repositories {
 }
 
 dependencies {
-    // Starter para criar APIs REST
     implementation 'org.springframework.boot:spring-boot-starter-web'
-
-    // Starter para JPA (Hibernate) + integração com Spring Data
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-    // Driver do PostgreSQL
+    // >>> necessário para @Valid, @NotBlank, @NotNull
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
     runtimeOnly 'org.postgresql:postgresql'
 
-    // Testes
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
+
 
 tasks.named('test') {
     useJUnitPlatform()

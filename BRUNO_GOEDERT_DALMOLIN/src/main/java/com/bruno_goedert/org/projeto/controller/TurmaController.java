@@ -1,61 +1,57 @@
 package com.bruno_goedert.org.projeto.controller;
 
-import org.springframework.http.HttpStatus;
+import com.bruno_goedert.org.projeto.dto.TurmaRequest;
+import com.bruno_goedert.org.projeto.dto.TurmaResponse;
+import com.bruno_goedert.org.projeto.service.TurmaService;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
+import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/turmas")
 public class TurmaController {
 
-    @GetMapping("/name")
-    @ResponseStatus(HttpStatus.OK)
-    public String getName() {
-        return "Turma 03";
+    private final TurmaService service;
+
+    public TurmaController(TurmaService service) {
+        this.service = service;
     }
 
-    @GetMapping("/quantity")
-    @ResponseStatus(HttpStatus.OK)
-    public String getQuantity() {
-        return "10";
+    // C - CREATE
+    @PostMapping
+    public ResponseEntity<TurmaResponse> create(@Valid @RequestBody TurmaRequest body) {
+        TurmaResponse created = service.create(body);
+        return ResponseEntity
+                .created(URI.create("/turmas/" + created.getId()))
+                .body(created);
     }
 
-    @PostMapping("/create")
-    @ResponseStatus(HttpStatus.CREATED)
-    public String create() {
-        return "Turma T03N criada";
+    // R - READ by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<TurmaResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getById(id));
     }
 
-    @PutMapping("/update")
-    @ResponseStatus(HttpStatus.OK)
-    public String update() {
-        return "Turma T03N atualizada";
+    // R - READ all
+    @GetMapping
+    public ResponseEntity<List<TurmaResponse>> listAll() {
+        return ResponseEntity.ok(service.listAll());
     }
 
-
-    @DeleteMapping("/delete")
-    @ResponseStatus(HttpStatus.OK)
-    public String delete() {
-        return "DELETE TUMAR 03";
+    // U - UPDATE by ID
+    @PutMapping("/{id}")
+    public ResponseEntity<TurmaResponse> update(@PathVariable Long id,
+                                                @Valid @RequestBody TurmaRequest body) {
+        return ResponseEntity.ok(service.update(id, body));
     }
 
-    @GetMapping("/disciplina")
-    @ResponseStatus(HttpStatus.OK)
-    public String getDisciplina() {
-        return "Mineiração de dados";
-    }
-
-    @GetMapping("/alunos")
-    @ResponseStatus(HttpStatus.OK)
-    public List<String> getAlunos() {
-        return Arrays.asList(
-                "Ana Silva",
-                "Carlos Souza",
-                "Mariana Oliveira",
-                "Pedro Santos",
-                "Beatriz Costa"
-        );
+    // D - DELETE by ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
